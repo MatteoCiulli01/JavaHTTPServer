@@ -152,7 +152,7 @@ public class JavaHTTPServer implements Runnable{
 			
 		} catch (FileNotFoundException fnfe) {
 			try {
-                            if(!fileRequested.endsWith("/") && !fileRequested.endsWith("html")){
+                            if(!fileRequested.endsWith("/") && !fileRequested.endsWith("html") && !fileRequested.endsWith("css")){
                                 fileRedirected(out,dataOut,fileRequested);
                             }
                             else fileNotFound(out, dataOut, fileRequested);
@@ -198,9 +198,15 @@ public class JavaHTTPServer implements Runnable{
 	// return supported MIME Types
 	private String getContentType(String fileRequested) {
 		if (fileRequested.endsWith(".htm")  ||  fileRequested.endsWith(".html"))
-			return "text/html";
-		else
-			return "text/plain";
+                {
+                    return "text/html";
+                }
+                else if(fileRequested.endsWith(".css"))
+                {
+                    return "text/css";
+                }
+                else
+                return "text/plain";  
 	}
 	
 	private void fileNotFound(PrintWriter out, OutputStream dataOut, String fileRequested) throws IOException {
