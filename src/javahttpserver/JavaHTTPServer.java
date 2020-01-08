@@ -21,10 +21,13 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.StringTokenizer;
-
+import javahttpserver.pojo.App;
+import javahttpserver.parser.AppConfigParser;
+import javax.xml.bind.JAXBException;
 
 public class JavaHTTPServer implements Runnable{ 
 	
@@ -33,7 +36,7 @@ public class JavaHTTPServer implements Runnable{
 	static final String FILE_NOT_FOUND = "404.html";
 	static final String METHOD_NOT_SUPPORTED = "not_supported.html";
 	// port to listen connection
-	static final int PORT = 8080;
+	//static final int PORT = 8080;
 	
 	// verbose mode
 	static final boolean verbose = true;
@@ -47,10 +50,16 @@ public class JavaHTTPServer implements Runnable{
 	
 	public static void main(String[] args) {
 		try {
+                        AppConfigParser configParser = new AppConfigParser();
+                        App config = configParser.parse("javahttpserver/app.xml");
+                        System.out.println(config);
+                        int PORT = config.getConfig().get(0).getPort();        
 			ServerSocket serverConnect = new ServerSocket(PORT);
                         
 			System.out.println("Server started.\nListening for connections on port : " + PORT + " ...\n");
 			
+
+                        
 			// we listen until user halts server execution
 			while (true) {
 				JavaHTTPServer myServer = new JavaHTTPServer(serverConnect.accept());
@@ -64,7 +73,12 @@ public class JavaHTTPServer implements Runnable{
 				thread.start();
 			}
 			
-		} catch (IOException e) {
+		}        
+                catch (JAXBException ex) {
+                ex.printStackTrace();
+                } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+                } catch (IOException e) {
 			System.err.println("Server Connection error : " + e.getMessage());
 		}
 	}
